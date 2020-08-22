@@ -5,6 +5,12 @@ const app = express();
 
 connectDB();
 
+// middleware
+
+// process body of posts as json
+app.use(express.json({ extended: false }));
+
+// routes
 app.get("/", (req, res) => res.send("API Running"));
 
 app.use("/api/users", require("./routes/api/users"));
