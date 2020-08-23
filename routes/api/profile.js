@@ -51,7 +51,7 @@ router.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-    console.log(req.body, Object.keys(req.body));
+
     const profileFields = Object.keys(req.body)
       .filter((x) => profileprops.includes(x) && !!req.body[x])
       .reduce((acc, x) => {
@@ -90,5 +90,58 @@ router.post(
     }
   }
 );
+
+// @route GET api/profile
+// @desc Get all user profiles
+// @access Public
+router.get("/", async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate("user", ["name", "avatar"]);
+    res.json(profiles);
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @route GET api/profile/user/:user_id
+// @desc Get profile by user id
+// @access Public
+router.get("/user/:user_id", async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id,
+    }).populate("user", ["name", "avatar"]);
+
+    if (!profile) return res.status(400).json({ msg: "Profile not found" });
+    res.json(profile);
+  } catch (error) {
+    console.error(error.message);
+    if (error.kind === "ObjectId") {
+      return res.status(400).json({ msg: "Profile not found" });
+    }
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @route DELETE api/profile
+// @desc delete profile, user profile & posts
+// @access Private
+router.delete("/", auth, async (req, res) => {
+  try {
+    await Profile.findOneAndRemove({
+      user: req.user.id,
+    });
+
+    await User.findOneAndRemove({
+      _id: req.user.id,
+    });
+
+    res.json({ msg: "User was deleted" });
+  } catch (error) {
+    console.error(error.message);
+    return res.status(500).send("Server Error");
+  }
+});
 
 module.exports = router;
