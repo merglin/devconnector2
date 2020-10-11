@@ -3,7 +3,6 @@ import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createProfile, getCurrentProfile } from "../../actions/profile";
-import profile from "../../reducers/profile";
 
 function EditProfile({
   profile: { profile, loading },
@@ -28,27 +27,41 @@ function EditProfile({
   const [displaySocialInputs, toggleSocialInputs] = useState(false);
   useEffect(() => {
     getCurrentProfile();
-    profile = profile ? profile : {};
-    profile.social = profile.social ? profile.social : {};
+    var localProfile = profile ? profile : {};
+    localProfile.social = profile.social ? profile.social : {};
     setFormData({
-      company: loading || !profile.company ? "" : profile.company,
-      website: loading || !profile.website ? "" : profile.website,
-      status: loading || !profile.status ? "" : profile.status,
-      location: loading || !profile.location ? "" : profile.location,
-      skills: loading || !profile.skills ? "" : profile.skills,
+      company: loading || !localProfile.company ? "" : localProfile.company,
+      website: loading || !localProfile.website ? "" : localProfile.website,
+      status: loading || !localProfile.status ? "" : localProfile.status,
+      location: loading || !localProfile.location ? "" : localProfile.location,
+      skills: loading || !localProfile.skills ? "" : localProfile.skills,
       githubusername:
-        loading || !profile.githubusername ? "" : profile.githubusername,
-      bio: loading || !profile.bio ? "" : profile.bio,
-      twitter: loading || !profile.social.twitter ? "" : profile.social.twitter,
+        loading || !localProfile.githubusername
+          ? ""
+          : localProfile.githubusername,
+      bio: loading || !localProfile.bio ? "" : localProfile.bio,
+      twitter:
+        loading || !localProfile.social.twitter
+          ? ""
+          : localProfile.social.twitter,
       facebook:
-        loading || !profile.social.facebook ? "" : profile.social.facebook,
+        loading || !localProfile.social.facebook
+          ? ""
+          : localProfile.social.facebook,
       linkedin:
-        loading || !profile.social.linkedin ? "" : profile.social.linkedin,
-      youtube: loading || !profile.social.youtube ? "" : profile.social.youtube,
+        loading || !localProfile.social.linkedin
+          ? ""
+          : localProfile.social.linkedin,
+      youtube:
+        loading || !localProfile.social.youtube
+          ? ""
+          : localProfile.social.youtube,
       instagram:
-        loading || !profile.social.instagram ? "" : profile.social.instagram,
+        loading || !localProfile.social.instagram
+          ? ""
+          : localProfile.social.instagram,
     });
-  }, [loading]);
+  }, [loading, getCurrentProfile]);
   const {
     company,
     website,
