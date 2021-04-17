@@ -3,12 +3,13 @@ import {
   POST_ERROR,
   UPDATE_LIKES,
   DELETE_POST,
+  ADD_POST,
 } from "../actions/types";
 
 const initialState = {
   posts: [],
   post: null,
-  oadingL: true,
+  loading: true,
   error: {},
 };
 
@@ -21,10 +22,16 @@ export default function (state = initialState, action) {
         posts: payload,
         loading: false,
       };
+    case ADD_POST:
+      return {
+        ...state,
+        posts: [payload, ...state.posts],
+        loading: false,
+      };
     case DELETE_POST:
       return {
         ...state,
-        posts: state.posts.filter((p) => p._id === payload.postId),
+        posts: state.posts.filter((p) => p._id !== payload.postId),
         loading: false,
       };
     case POST_ERROR:
